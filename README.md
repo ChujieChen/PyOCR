@@ -11,10 +11,10 @@ This tool also provide a manual correction
 using homophones of target words. 
 
 ## Installing PyOCR
-Once you've downloaded all files. Installing belowing dependencies:
+Once you've downloaded all files. Install following dependencies:
 ([Tesseract](https://github.com/tesseract-ocr/tesseract), 
 [Pillow](https://pillow.readthedocs.io/en/stable/), 
-[Numpy] (https://numpy.org),
+[Numpy](https://numpy.org),
 [py-tesseract](https://pypi.org/project/pytesseract/), 
 [python-datamuse](https://pypi.org/project/python-datamuse/))
 
@@ -25,8 +25,9 @@ contains following command lines:
 * pip install pytesseract python-datamuse
 
 ## Running PyOCR
-In your console, run:
+In your console, run below commend line:
 * python3 PyOCR.py
+
 to launch the GUI. Then you can select the image to OCR with. And you
 can also get homophones of a word as its candidates.
 
