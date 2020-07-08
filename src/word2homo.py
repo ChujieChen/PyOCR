@@ -13,9 +13,13 @@ class Word2Homo:
         self.word = word
         self.api = datamuse.Datamuse()
     def getHomophones(self):
-        homos_info = self.api.words(sl=self.word, max=10)
+        # homos_info = self.api.words(sl=self.word, max=10)
+        homos_info = self.api.words(sp=self.word, max=5)
         homos = [info['word'] for info in homos_info]
         return homos
+    def getCandidates(self):
+        # homographs + homophones
+        
         
     
 if __name__ == "__main__":
