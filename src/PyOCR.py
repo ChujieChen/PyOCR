@@ -16,9 +16,10 @@ class PyOCR:
         
         # Image display with Canvas
         self.canvas = Canvas(master, width=512, height=512, borderwidth=0, highlightthickness=0)
-        path = self.preProcessImg(ifile='buzz.png')
-        self.image = ImageTk.PhotoImage(path)
-        self.image_on_canvas = self.canvas.create_image(0, 0, image=self.image, anchor=NW)
+        img = self.preProcessImg(ifile='buzz.png')
+        self.img = img
+        self.TkImage = ImageTk.PhotoImage(img)
+        self.image_on_canvas = self.canvas.create_image(0, 0, image=self.TkImage, anchor=NW)
         
         # Canvas with selection
         self.rectCoords = [0, 0, 0, 0]
@@ -31,8 +32,11 @@ class PyOCR:
         # Select Image - OCR
         browseBtn = Button(master, text='Browse', command=self.choose)
         choose = Label(master, text="Choose file")
-        # self.image = PhotoImage(file='buzz.png')
         quit_btn = Button(master, text="Quit", command=self.quit_tool)
+        
+        # Confirm cropping Image
+        cropBtn = Button(master, text="Crop", command=self.cropImage)
+        
         # Output from OCR
         self.textBox = Text(self.master, height=50, width=30)
         self.textBox.insert(END, "NO TEXT FOR NOW")
@@ -69,8 +73,17 @@ class PyOCR:
         self.homoBox.grid(row=row, column=3, rowspan=2)
         
         row=5
-        quit_btn.grid(row=row, column=1)
+        quit_btn.grid(row=row, column=0)
+        cropBtn.grid(row=row, column=1)
         
+    
+    def preProcessImg(self, ifile):
+        img = Image.open(ifile)
+        width, height = img.size
+        # fix size to 512 x 512
+        newsize = (512, 512) 
+        img = img.resize(newsize)
+        return img
     
     def get_mouse_posn(self, event):
         # topx, topy
@@ -81,7 +94,46 @@ class PyOCR:
         self.rectCoords[2], self.rectCoords[3] = event.x, event.y
         topx, topy, botx, boty = self.rectCoords
         self.canvas.coords(self.rect_id, topx, topy, botx, boty)  # Update selection rect.
-    
+
+    def choose(self):
+        ifile = filedialog.askopenfile(parent=self.master,mode='rb',title='Choose a file')
+        self.img = self.preProcessImg(ifile)
+        self.TkImage = ImageTk.PhotoImage(self.img)
+        self.canvas.itemconfig(self.image_on_canvas, image=self.TkImage)
+        self.textBox.delete('1.0', END)
+        self.textBox.insert(END, Img2Text(self.img).get_text())
+        
+    def cropImage(self):
+        # crop the image
+        ## crop size valid
+        for i, coord in zip(range(4),self.rectCoords):
+            if coord < 0: 
+                self.rectCoords[i] = 0
+            if i % 2 == 0 and coord > self.img.size[0]:
+                self.rectCoords[i] = self.img.size[0]
+            elif i % 2 == 1 and coord > self.img.size[1]:
+                self.rectCoords[i] = self.img.size[1]
+        ## crop format: left, top, right, buttom
+        if self.rectCoords[0] > self.rectCoords[2]:
+            tmp = self.rectCoords[0]
+            self.rectCoords[0] = self.rectCoords[2]
+            self.rectCoords[2] = tmp
+        if self.rectCoords[1] > self.rectCoords[3]:
+            tmp = self.rectCoords[1]
+            self.rectCoords[1] = self.rectCoords[3]
+            self.rectCoords[3] = tmp
+        ## now crop size is valid and in right form
+        topx, topy, botx, boty = self.rectCoords
+        self.img = self.img.crop((topx, topy, botx, boty))
+        self.img = self.img.resize((512,512))
+        # update the image
+        self.TkImage = ImageTk.PhotoImage(self.img)
+        self.canvas.itemconfig(self.image_on_canvas, image=self.TkImage)
+        # update the OCR result
+        self.textBox.delete('1.0', END)
+        self.textBox.insert(END, Img2Text(self.img).get_text())
+        
+        
     def getHomo(self):
         # has to be lowercase
         word = self.word.get().lower()
@@ -90,26 +142,10 @@ class PyOCR:
         for homo in homo_list:
             self.homoBox.insert(END, homo)
             self.homoBox.insert(END, "\n")
-        
-        
+
     def quit_tool(self):
-        self.master.destroy()
-        
-    def choose(self):
-        ifile = filedialog.askopenfile(parent=self.master,mode='rb',title='Choose a file')
-        path = self.preProcessImg(ifile)
-        self.image2 = ImageTk.PhotoImage(path)
-        self.canvas.itemconfig(self.image_on_canvas, image=self.image2)
-        self.textBox.delete('1.0', END)
-        self.textBox.insert(END, Img2Text(path).get_text())
-    
-    def preProcessImg(self, ifile):
-        path = Image.open(ifile)
-        width, height = path.size
-        # fix size to 512 x 512
-        newsize = (512, 512) 
-        path = path.resize(newsize)
-        return path
+        self.master.destroy()    
+
         
         
 if __name__ == "__main__":
