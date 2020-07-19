@@ -26,6 +26,8 @@ def update_sel_rect(event):
 
     botx, boty = event.x, event.y
     canvas.coords(rect_id, topx, topy, botx, boty)  # Update selection rect.
+    # print(topx, topy)
+    # print(botx, boty)
 
 
 window = tk.Tk()

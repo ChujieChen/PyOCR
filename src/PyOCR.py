@@ -14,12 +14,19 @@ class PyOCR:
         master.title("PyOCR - Chujie Chen")
         master.geometry("1080x720")
         
-        # Image display with canvas
+        # Image display with Canvas
         self.canvas = Canvas(master, width=512, height=512, borderwidth=0, highlightthickness=0)
         path = self.preProcessImg(ifile='buzz.png')
         self.image = ImageTk.PhotoImage(path)
-        self.canvas.create_image(0, 0, image=self.image, anchor=NW)
+        self.image_on_canvas = self.canvas.create_image(0, 0, image=self.image, anchor=NW)
         
+        # Canvas with selection
+        self.rectCoords = [0, 0, 0, 0]
+        topx, topy, topx, topy = self.rectCoords
+        self.rect_id = self.canvas.create_rectangle(topx, topy, topx, topy,
+                                  dash=(4,4), fill='', outline='red',width=2.0)
+        self.canvas.bind('<Button-1>', self.get_mouse_posn)
+        self.canvas.bind('<B1-Motion>', self.update_sel_rect)
         
         # Select Image - OCR
         browseBtn = Button(master, text='Browse', command=self.choose)
@@ -64,7 +71,17 @@ class PyOCR:
         row=5
         quit_btn.grid(row=row, column=1)
         
-        
+    
+    def get_mouse_posn(self, event):
+        # topx, topy
+        self.rectCoords[0], self.rectCoords[1] = event.x, event.y
+
+    def update_sel_rect(self, event):
+        # botx, boty
+        self.rectCoords[2], self.rectCoords[3] = event.x, event.y
+        topx, topy, botx, boty = self.rectCoords
+        self.canvas.coords(self.rect_id, topx, topy, botx, boty)  # Update selection rect.
+    
     def getHomo(self):
         # has to be lowercase
         word = self.word.get().lower()
@@ -82,9 +99,7 @@ class PyOCR:
         ifile = filedialog.askopenfile(parent=self.master,mode='rb',title='Choose a file')
         path = self.preProcessImg(ifile)
         self.image2 = ImageTk.PhotoImage(path)
-        
-        self.canvas.create_image(0, 0, image=self.image2, anchor=NW)
-        
+        self.canvas.itemconfig(self.image_on_canvas, image=self.image2)
         self.textBox.delete('1.0', END)
         self.textBox.insert(END, Img2Text(path).get_text())
     
