@@ -13,13 +13,18 @@ class PyOCR:
         # Title
         master.title("PyOCR - Chujie Chen")
         master.geometry("1080x720")
+        
+        # Image display with canvas
+        self.canvas = Canvas(master, width=512, height=512, borderwidth=0, highlightthickness=0)
+        path = self.preProcessImg(ifile='buzz.png')
+        self.image = ImageTk.PhotoImage(path)
+        self.canvas.create_image(0, 0, image=self.image, anchor=NW)
+        
+        
         # Select Image - OCR
         browseBtn = Button(master, text='Browse', command=self.choose)
         choose = Label(master, text="Choose file")
         # self.image = PhotoImage(file='buzz.png')
-        path = self.preProcessImg(ifile='buzz.png')
-        self.image = ImageTk.PhotoImage(path)
-        self.inImg = Label(image=self.image)
         quit_btn = Button(master, text="Quit", command=self.quit_tool)
         # Output from OCR
         self.textBox = Text(self.master, height=50, width=30)
@@ -36,7 +41,9 @@ class PyOCR:
         
         ###### Layout ######
         row=0
-        self.inImg.grid(row=row, column=0, columnspan=2, rowspan=3)
+        # self.inImg.grid(row=row, column=0, columnspan=2, rowspan=3)
+        self.canvas.grid(row=row, column=0, columnspan=2, rowspan=3)
+        
         self.textBox.grid(row=row, column=2, rowspan=5)
         wordLable.grid(row=row, column=3)
         
@@ -75,8 +82,8 @@ class PyOCR:
         ifile = filedialog.askopenfile(parent=self.master,mode='rb',title='Choose a file')
         path = self.preProcessImg(ifile)
         self.image2 = ImageTk.PhotoImage(path)
-        self.inImg.configure(image=self.image2)
-        self.inImg.image=self.image2
+        
+        self.canvas.create_image(0, 0, image=self.image2, anchor=NW)
         
         self.textBox.delete('1.0', END)
         self.textBox.insert(END, Img2Text(path).get_text())
