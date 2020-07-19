@@ -35,7 +35,7 @@ class PyOCR:
         quit_btn = Button(master, text="Quit", command=self.quit_tool)
         
         # Confirm cropping Image
-        cropBtn = Button(master, text="Crop", command=self.cropImage)
+        cropBtn = Button(master, text="Update OCR", command=self.cropImage)
         
         # Output from OCR
         self.textBox = Text(self.master, height=50, width=30)
@@ -104,6 +104,14 @@ class PyOCR:
         self.textBox.insert(END, Img2Text(self.img).get_text())
         
     def cropImage(self):
+        """
+        Only change self.img but not self.TkImage
+        Then update the OCR results
+        Returns
+        -------
+        None.
+
+        """
         # crop the image
         ## crop size valid
         for i, coord in zip(range(4),self.rectCoords):
@@ -124,20 +132,17 @@ class PyOCR:
             self.rectCoords[3] = tmp
         ## now crop size is valid and in right form
         topx, topy, botx, boty = self.rectCoords
-        self.img = self.img.crop((topx, topy, botx, boty))
-        self.img = self.img.resize((512,512))
-        # update the image
-        self.TkImage = ImageTk.PhotoImage(self.img)
-        self.canvas.itemconfig(self.image_on_canvas, image=self.TkImage)
+        croppedImg = self.img.crop((topx, topy, botx, boty))
         # update the OCR result
         self.textBox.delete('1.0', END)
-        self.textBox.insert(END, Img2Text(self.img).get_text())
+        self.textBox.insert(END, Img2Text(croppedImg).get_text())
         
         
     def getHomo(self):
         # has to be lowercase
         word = self.word.get().lower()
         homo_list = Word2Homo(word).getCandidates()
+        # print(homo_list)
         self.homoBox.delete('1.0', END)
         for homo in homo_list:
             self.homoBox.insert(END, homo)

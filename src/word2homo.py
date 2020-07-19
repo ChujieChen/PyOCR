@@ -22,7 +22,8 @@ class Word2Homo:
         # concatenate
         homos = homographs + homophones
         homos = set(homos)
-        homos.remove(self.word)
+        if self.word in homos:
+            homos.remove(self.word)
         return homos
         
         
