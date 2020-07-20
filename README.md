@@ -25,9 +25,15 @@ contains following command lines:
 * pip install pytesseract python-datamuse
 
 ## Running PyOCR
-In your console, run below commend line:
-* python3 PyOCR.py
+In your console, at directory `/PyOCR/pyocr/` run below commend line:
+* **./PyOCR.py**
+
+Or
+* **python3 PyOCR.py**
 
 to launch the GUI. Then you can select the image to OCR with. And you
-can also get homophones of a word as its candidates.
+can also get a list of homographs and homophones of a word as its candidates.
+
+## Using PyOCR
+**TODO**
 
