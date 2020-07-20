@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 from tkinter import *
 from tkinter import filedialog
@@ -81,7 +83,16 @@ class PyOCR:
         img = Image.open(ifile)
         width, height = img.size
         # fix size to 512 x 512
-        newsize = (512, 512) 
+        # set larger dimension to 512
+        if width > height:
+            ratio = 512. / width
+            width = 512
+            height = height * ratio
+        else:
+            ratio = 512. / height
+            height = 512
+            width = width * ratio
+        newsize = (int(width), int(height)) 
         img = img.resize(newsize)
         return img
     

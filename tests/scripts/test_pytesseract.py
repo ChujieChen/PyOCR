@@ -9,7 +9,7 @@ import pytesseract
 # Example tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
 
 # Simple image to string
-print(pytesseract.image_to_string(Image.open('/Users/chujiechen/Documents/User/Study/2019-2020/Summer2020/PyOCR/test/images/phototest-original.png')))
+print(pytesseract.image_to_string(Image.open('../images/phototest-original.png')))
 
 # French text image to string
 # print(pytesseract.image_to_string(Image.open('test-european.jpg'), lang='fra'))
