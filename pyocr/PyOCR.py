@@ -18,7 +18,7 @@ class PyOCR:
         
         # Image display with Canvas
         self.canvas = Canvas(master, width=512, height=512, borderwidth=0, highlightthickness=0)
-        img = self.preProcessImg(ifile='buzz.png')
+        img = self.preProcessImg(ifile=os.path.dirname(os.path.abspath(__file__)) + '/buzz.png')
         self.img = img
         self.TkImage = ImageTk.PhotoImage(img)
         self.image_on_canvas = self.canvas.create_image(0, 0, image=self.TkImage, anchor=NW)
